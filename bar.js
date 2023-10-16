@@ -1,5 +1,6 @@
 class Scene extends Phaser.Scene {
   preload() {
+    this.load.image("smoke", "assets/smoke.png")
     this.load.spritesheet("bar", "assets/bars.png", {
       frameWidth: 20,
       frameHeight: 20,
@@ -13,7 +14,17 @@ class Scene extends Phaser.Scene {
     background.setOrigin(0)
     const bar = this.add.nineslice(50, 100, "bar", 0, xp, 20, 5)
     bar.setOrigin(0)
-
+    let emitter = new Phaser.Geom.Line(50, 100, 50, 120)
+    const smoke = this.add.particles(0, 0, "smoke", {
+      frame: 0,
+      scale: {start: 0.5, end: 0},
+      speedX: -200,
+      alpha: {start: 0.8, end: 0},
+      emitZone: {
+        source: emitter
+      },
+      tint: [0xFF00FF, 0xFFFFFF],
+    })
     this.time.addEvent({
       callback: () => {
         xp = Math.max(10, xp - 10)
@@ -22,6 +33,13 @@ class Scene extends Phaser.Scene {
           targets: bar,
           props: {
             width: xp,
+          },
+          ease: "ease.in",
+        })
+        this.tweens.add({
+          targets: smoke,
+          props: {
+            x: xp,
           },
           ease: "ease.in",
         })
